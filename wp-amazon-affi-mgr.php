@@ -9,7 +9,6 @@ Author URI: http://www.nekonotechno.com/nekopress/
 License: GPL2
 */
 
-<?php
 /*  Copyright 2013 neko (Twitter : @techno_neko)
 
     This program is free software; you can redistribute it and/or modify
@@ -25,7 +24,6 @@ License: GPL2
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
 
 function amazon_affi_mgr_add_admin_menu() {
     add_submenu_page(
