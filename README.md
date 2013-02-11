@@ -5,8 +5,8 @@ WordPressでAmazonアソシエイトの色を一括置換するプラグイン
 
 **まだ一括置換は未実装**
 
-# 使い方
- - "(WordPress)/wp-content/plugins/"に"wp-amazon-affi-mgr"をコピー
+## 使い方
+ - "(WordPress)/wp-content/plugins/"フォルダに"wp-amazon-affi-mgr"フォルダをコピー
  - サイト管理に移動
  - 左のメニューの[プラグイン]-[インストール済みプラグイン]に表示されているので有効化
  - 左のメニューの[ツール]-[アフィリエイトの管理]を選択
