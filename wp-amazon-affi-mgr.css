@@ -10,7 +10,6 @@ table#affi_list tr {
     margin: 0;
     padding: 0;
 }
-
 table#affi_list th {
     padding: 3px 4px 1px 4px;
     border: #ddd solid;
@@ -23,6 +22,7 @@ table#affi_list td {
 	border: 1px #ddd solid;
 	border-width: 1px;
 }
+
 table.aam_color td {
 	font-family: "Lucida Console", Monaco, monospace;
 	margin-right: 5px;
