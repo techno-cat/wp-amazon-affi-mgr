@@ -1,0 +1,39 @@
+@charset "UTF-8";
+/* CSS Document */
+
+table#affi_list {
+    border: 1px #999 solid;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+table#affi_list tr {
+    margin: 0;
+    padding: 0;
+}
+
+table#affi_list th {
+    font-size: 0.8em;
+    padding: 3px 4px 1px 4px;
+    border: #999 solid;
+    border-width: 1px;
+    background: #ccc;
+    font-weight: bold;
+    //text-align: right;
+}
+table#affi_list td {
+	font-size: 0.8em;
+	padding: 3px 4px 1px 4px;
+	border: 1px #999 solid;
+	border-width: 1px;
+    //text-align: right;
+}
+
+table.aam_color td {
+	font-family: "Lucida Console", Monaco, monospace;
+	margin-right: 5px;
+	margin-left: 5px;
+}
+
+td.aam_color_name {
+	text-align: right;
+}

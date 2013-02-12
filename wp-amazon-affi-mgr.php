@@ -38,35 +38,10 @@ function amazon_affi_mgr_add_admin_menu() {
 add_action( 'admin_menu', 'amazon_affi_mgr_add_admin_menu' );
 
 function amazon_affi_mgr_add_css() {
-  echo '<style type="text/css">
-table#affi_list {
-    border: 1px #999 solid;
-    border-collapse: collapse;
-    border-spacing: 0;
+    $my_css = WP_PLUGIN_URL . '/' . str_replace( '.php', '.css', plugin_basename(__FILE__) );
+    wp_enqueue_style( 'amazon_affi_mgr_css', $my_css );
 }
-table#affi_list tr {
-    margin: 0;
-    padding: 0;
-}
-table#affi_list th {
-    font-size: 0.8em;
-    padding: 3px 4px 1px 4px;
-    border: #999 solid;
-    border-width: 1px;
-    background: #ccc;
-    font-weight: bold;
-    //text-align: right;
-}
-table#affi_list td {
-    font-size: 0.8em;
-    padding: 3px 4px 1px 4px;
-    border: 1px #999 solid;
-    border-width: 1px;
-    //text-align: right;
-}
-</style>';
-}
-add_action( 'admin_head', 'amazon_affi_mgr_add_css', 21 );
+add_action( 'init', 'amazon_affi_mgr_add_css' );
 
 define( "SEARCH_TEXT", 'http://rcm-jp.amazon.co.jp/e/cm' );
 
