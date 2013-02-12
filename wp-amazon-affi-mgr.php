@@ -152,34 +152,24 @@ function show_mgr_page(&$posts, $replaced = false) {
   <p>一括置換されました（まだ未実装）</p>
 <?php endif; ?>
   <form method="post" action="<?php echo $link_this_page; ?>">
-    <table id="affi_list">
+  	<table class="aam_color">
+      <tr><th> </th><th>変更前</th><th> </th><th>変更後</th></tr>
       <tr>
-        <th>キー</th><th>変更前</th><th>変更後</th><th>説明</th>
+        <td class="aam_color_name"><label>テキストの色</label>(fc1)</td><td><?php echo join( ',', array_keys($color_fc1)); ?></td><td>&gt;&gt;</td>
+        <td><input type="text" name="fc1" id="fc1" value="" size="8" maxlength="6" /></td>
       </tr>
       <tr>
-        <td>fc1</td>
-        <td><?php echo join( ',', array_keys($color_fc1)); ?></td>
-        <td><input type="text" name="bg1" value="" size="8" maxlength="6" /></td>
-        <td>テキストの色</td>
+        <td class="aam_color_name"><label>リンクの色</label>(lc1)</td><td><?php echo join( ',', array_keys($color_lc1)); ?></td><td>&gt;&gt;</td>
+        <td><input type="text" name="lc1" id="lc1" value="" size="8" maxlength="6" /></td>
+      </tr>
       <tr>
+        <td class="aam_color_name"><label>ボーダーの色</label>(bc1)</td><td><?php echo join( ',', array_keys($color_bc1)); ?></td><td>&gt;&gt;</td>
+        <td><input type="text" name="bc1" id="bc1" value="" size="8" maxlength="6" /></td>
+      </tr>
       <tr>
-        <td>lc1</td>
-        <td><?php echo join( ',', array_keys($color_lc1)); ?></td>
-        <td><input type="text" name="bg1" value="" size="8" maxlength="6" /></td>
-        <td>リンクの色</td>
-      <tr>
-      <tr>
-        <td>bc1</td>
-        <td><?php echo join( ',', array_keys($color_bc1)); ?></td>
-        <td><input type="text" name="bg1" value="" size="8" maxlength="6" /></td>
-        <td>ボーダーの色</td>
-      <tr>
-      <tr>
-        <td>bg1</td>
-        <td><?php echo join( ',', array_keys($color_bg1)); ?></td>
-        <td><input type="text" name="bg1" value="" size="8" maxlength="6" /></td>
-        <td>背景の色</td>
-      <tr>
+        <td class="aam_color_name"><label>背景の色</label>(bg1)</td><td><?php echo join( ',', array_keys($color_bg1)); ?></td><td>&gt;&gt;</td>
+        <td><input type="text" name="bg1" id="bg1" value="" size="8" maxlength="6" /></td>
+      </tr>
     </table>
     <input type="hidden" name="posted" value="Y">
     <p class="submit">
