@@ -43,47 +43,72 @@ function amazon_affi_mgr_add_css() {
 }
 add_action( 'init', 'amazon_affi_mgr_add_css' );
 
-define( "SEARCH_TEXT", 'http://rcm-jp.amazon.co.jp/e/cm' );
+
+define( 'AAM_AMAZON_URL', 'http://rcm-jp.amazon.co.jp/e/cm' );
 
 function amazon_affi_mgr_admin_page() {
-?>
-<div class="wrap">
-  <h2>Amazonアフィリエイトの管理</h2>
-<?php
     global $wpdb;
     $sql  = "SELECT * FROM $wpdb->posts";
     $sql .= " WHERE post_status = 'publish'";
-    $sql .= " AND post_content LIKE '%" . SEARCH_TEXT . "%'";
+    $sql .= " AND post_content LIKE '%" . AAM_AMAZON_URL . "%'";
     $posts = $wpdb->get_results( $sql, ARRAY_A );
 
     $link_this_page = str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] );
     $link_this_page = str_replace( '&affi_list=1', '', $link_this_page );
     $link_affi_list = $link_this_page . '&affi_list=1';
-    $ptn_str = '/iframe src=\"(.+)?\"/i';
+
 ?>
+<div class="wrap">
+  <h2>Amazonアフィリエイトの管理</h2>
   <p>アフィリエイトを含む記事の数: <?php echo count($posts); ?></p>
   <p>
     <a href="<?php echo $link_this_page; ?>">操作画面</a> / <a href="<?php echo $link_affi_list; ?>">一覧を表示</a>
   </p>
-<?php if ( !$posts ) : ?>
+<?php
+    if ( !$posts ) {
+        show_post_not_exists();
+    }
+    else if ( $_GET['affi_list'] ) {
+        show_affi_list( $posts );
+    }
+    else {
+        if ( $_POST['posted'] === 'Y' ) {
+            // todo: replace
+            show_mgr_page( $posts, true );
+        }
+        else {
+            show_mgr_page( $posts, false );
+        }
+    }
+?>
+
+<?php
+}
+
+function show_post_not_exists() {
+?>
   <p>アフィリエイトを含む記事はみつかりませんでした。</p>
-<?php elseif ( $_GET['affi_list'] ) : ?>
-  <h3>アフィリエイト一覧</h3>
+<?php
+}    
+    
+function show_affi_list(&$posts) {
+    $ptn_str = '/iframe src=\"(.+)?\"/i';
+?>
   <table id="affi_list">
     <tr>
       <th>タイトル</th><th>数</th><th>fc1</th><th>lc1</th><th>bc1</th><th>bg1</th>
     </tr>
 <?php
-        foreach ($posts as $post) {
-            preg_match_all( $ptn_str, $post['post_content'], $matches, PREG_SET_ORDER );
-            $affi_count = count( $matches );
+    foreach ($posts as $post) {
+        preg_match_all( $ptn_str, $post['post_content'], $matches, PREG_SET_ORDER );
+        $affi_count = count( $matches );
 
-            $td_tag = '<td';
-            if ( 1 < count($matches) ) {
-                $td_tag .= ' rowspan="' . count($matches) . '"';
-            }
-            $td_tag .= '>';
-            $match = array_shift( $matches );
+        $td_tag = '<td';
+        if ( 1 < count($matches) ) {
+            $td_tag .= ' rowspan="' . count($matches) . '"';
+        }
+        $td_tag .= '>';
+        $match = array_shift( $matches );
 ?>
     <tr>
       <?php echo $td_tag; ?><a href="<?php echo $post['guid']; ?>"><?php echo $post['post_title']; ?></a></td>
@@ -91,40 +116,41 @@ function amazon_affi_mgr_admin_page() {
       <td><?php echo join('</td><td>', parse_color_code($match[1])); ?></td>
     </tr>
 <?php
-            foreach ($matches as $match) {
+        foreach ($matches as $match) {
 ?>
     <tr>
       <td><?php echo join('</td><td>', parse_color_code($match[1])); ?></td>
     </tr>
 <?php
-            }
         }
+    }
 ?>
   </table>
-<?php else : ?>
 <?php
-        if ( $_POST['posted'] === 'Y' ) {
+}
+
+function show_mgr_page(&$posts, $replaced = false) {
+    $ptn_str = '/iframe src=\"(.+)?\"/i';
+
+    $color_fc1 = array();
+    $color_lc1 = array();
+    $color_bc1 = array();
+    $color_bg1 = array();
+
+    foreach ($posts as $post) {
+        preg_match_all( $ptn_str, $post['post_content'], $matches, PREG_SET_ORDER );
+        foreach ($matches as $match) {
+            $colors = parse_color_code( $match[1] );
+            $color_fc1[$colors[0]]++;
+            $color_lc1[$colors[1]]++;
+            $color_bc1[$colors[2]]++;
+            $color_bg1[$colors[3]]++;
+        }
+    }
 ?>
+<?php if ( $replaced ) : ?>
   <p>一括置換されました（まだ未実装）</p>
-<?php
-        }
-
-        $color_fc1 = array();
-        $color_lc1 = array();
-        $color_bc1 = array();
-        $color_bg1 = array();
-
-        foreach ($posts as $post) {
-            preg_match_all( $ptn_str, $post['post_content'], $matches, PREG_SET_ORDER );
-            foreach ($matches as $match) {
-                $colors = parse_color_code( $match[1] );
-                $color_fc1[$colors[0]]++;
-                $color_lc1[$colors[1]]++;
-                $color_bc1[$colors[2]]++;
-                $color_bg1[$colors[3]]++;
-            }
-        }
-?>
+<?php endif; ?>
   <form method="post" action="<?php echo $link_this_page; ?>">
     <table id="affi_list">
       <tr>
@@ -161,7 +187,6 @@ function amazon_affi_mgr_admin_page() {
     </p>
   </form>
 </div>
-<?php endif; ?>
 <?php
 }
 
