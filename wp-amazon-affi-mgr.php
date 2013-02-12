@@ -91,7 +91,7 @@ function amazon_affi_mgr_admin_page() {
     <a href="<?php echo $link_this_page; ?>">操作画面</a> / <a href="<?php echo $link_affi_list; ?>">一覧を表示</a>
   </p>
 <?php if ( !$posts ) : ?>
-  <p>アフィリエイトを含む記事がみつかりませんでした。</p>
+  <p>アフィリエイトを含む記事はみつかりませんでした。</p>
 <?php elseif ( $_GET['affi_list'] ) : ?>
   <h3>アフィリエイト一覧</h3>
   <table id="affi_list">
