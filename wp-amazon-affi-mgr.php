@@ -52,8 +52,6 @@ class AmazonAffiMgr {
 
     public $posts = array();
     public $link = array();
-    private $header = '';
-    private $footer = '';
 
     function __construct() {
         global $wpdb;
@@ -62,29 +60,38 @@ class AmazonAffiMgr {
         $sql .= " AND post_content LIKE '%" . AmazonAffiMgr::AMAZON_URL . "%'";
         $sql .= " ORDER BY ID DESC";
         $this->posts = $wpdb->get_results( $sql, ARRAY_A );
+    }
+
+    private function put_header() {
 
         // このプラグインで追加したQUERY文字列を削除して、
-        // このプラグインの管理画面のURLを作成
-        $link_this_page = str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] );
-        $link_this_page = str_replace( '&affi_list=1', '', $link_this_page );
+        // このプラグインの管理画面のURIを作成
+        $uri_this = str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] );
+        $uri_this = str_replace( '&affi_list=1', '', $uri_this );
 
-        // アフィリエイトを含む記事一覧ページのURLを作成
-        $link_affi_list = $link_this_page . '&affi_list=1';
+        // アフィリエイトを含む記事一覧ページのURIを作成
+        $uri_list = $uri_this . '&affi_list=1';
 
-        $this->header = '
+?>
 <div class="wrap">
   <h2>Amazonアフィリエイトの管理</h2>
-  <p>アフィリエイトを含む記事の数: ' . count($this->posts) . '</p>
+  <p>アフィリエイトを含む記事の数: <?php echo count($this->posts); ?></p>
   <p>
-    <a href="' . $link_this_page . '">操作画面</a> / <a href="' . $link_affi_list . '">一覧を表示</a>
-  </p>';
+    <a href="<?php echo $uri_this; ?>">操作画面</a> / <a href="<?php echo $uri_list; ?>">一覧を表示</a>
+  </p>
+<?php
+    }
 
-        $this->footer = '</div>';
+    private function put_footer() {
+?>
+</div>
+<?php
     }
 
     static public function render() {
         $mgr = new AmazonAffiMgr();
-        echo $mgr->header;
+
+        echo $mgr->put_header();
         if ( !$mgr->posts ) {
             show_post_not_exists();
         }
@@ -100,7 +107,7 @@ class AmazonAffiMgr {
                 show_mgr_page( $mgr->posts, false );
             }
         }
-        echo $mgr->footer;
+        echo $mgr->put_footer();
     }
 }
 
