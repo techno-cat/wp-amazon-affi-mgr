@@ -43,10 +43,13 @@ function amazon_affi_mgr_add_css() {
 }
 add_action( 'init', 'amazon_affi_mgr_add_css' );
 
+function amazon_affi_mgr_admin_page() {
+    AmazonAffiMgr::render();
+}
 
 define( 'AAM_AMAZON_URL', 'http://rcm-jp.amazon.co.jp/e/cm' );
+class AmazonAffiMgr {
 
-class AmazonAffMgr {
     public $posts = array();
     public $link = array();
 
@@ -64,35 +67,34 @@ class AmazonAffMgr {
         $this->header = '
 <div class="wrap">
   <h2>Amazonアフィリエイトの管理</h2>
-  <p>アフィリエイトを含む記事の数: ' . count($mgr->posts) . '</p>
+  <p>アフィリエイトを含む記事の数: ' . count($this->posts) . '</p>
   <p>
     <a href="' . $link_this_page . '">操作画面</a> / <a href="' . $link_affi_list . '">一覧を表示</a>
   </p>';
 
         $this->footer = '</div>';
     }
-}
 
-function amazon_affi_mgr_admin_page() {
-    $mgr = new AmazonAffMgr();
-
-    echo $mgr->header;
-    if ( !$mgr->posts ) {
-        show_post_not_exists();
-    }
-    else if ( $_GET['affi_list'] ) {
-        show_affi_list( $mgr->posts );
-    }
-    else {
-        if ( $_POST['posted'] === 'Y' ) {
-            // todo: replace
-            show_mgr_page( $mgr->posts, true );
+    static public function render() {
+        $mgr = new AmazonAffiMgr();
+        echo $mgr->header;
+        if ( !$mgr->posts ) {
+            show_post_not_exists();
+        }
+        else if ( $_GET['affi_list'] ) {
+            show_affi_list( $mgr->posts );
         }
         else {
-            show_mgr_page( $mgr->posts, false );
+            if ( $_POST['posted'] === 'Y' ) {
+                // todo: replace
+                show_mgr_page( $mgr->posts, true );
+            }
+            else {
+                show_mgr_page( $mgr->posts, false );
+            }
         }
+        echo $mgr->footer;
     }
-    echo $mgr->footer;
 }
 
 function show_post_not_exists() {
