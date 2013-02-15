@@ -63,6 +63,16 @@ class AmazonAffiMgr {
     }
 
     private function put_header() {
+        echo '
+<div class="wrap">
+  <h2>Amazonアフィリエイトの管理</h2>';
+    }
+
+    private function put_footer() {
+        echo '</div>';
+    }
+
+    private function put_menu() {
 
         // このプラグインで追加したQUERY文字列を削除して、
         // このプラグインの管理画面のURIを作成
@@ -72,20 +82,11 @@ class AmazonAffiMgr {
         // アフィリエイトを含む記事一覧ページのURIを作成
         $uri_list = $uri_this . '&affi_list=1';
 
-?>
-<div class="wrap">
-  <h2>Amazonアフィリエイトの管理</h2>
-  <p>アフィリエイトを含む記事の数: <?php echo count($this->posts); ?></p>
+        echo '
+  <p>アフィリエイトを含む記事の数: ' . count($this->posts) . '</p>
   <p>
-    <a href="<?php echo $uri_this; ?>">操作画面</a> / <a href="<?php echo $uri_list; ?>">一覧を表示</a>
-  </p>
-<?php
-    }
-
-    private function put_footer() {
-?>
-</div>
-<?php
+    <a href="' . $uri_this . '">操作画面</a> / <a href="' . $uri_list . '">一覧を表示</a>
+  </p>';
     }
 
     static public function render() {
@@ -96,9 +97,11 @@ class AmazonAffiMgr {
             show_post_not_exists();
         }
         else if ( $_GET['affi_list'] ) {
+            echo $mgr->put_menu();
             show_affi_list( $mgr->posts );
         }
         else {
+            echo $mgr->put_menu();
             if ( $_POST['posted'] === 'Y' ) {
                 // todo: replace
                 show_mgr_page( $mgr->posts, true );
@@ -119,6 +122,7 @@ function show_post_not_exists() {
     
 function show_affi_list(&$posts) {
 ?>
+
   <table id="affi_list">
     <tr>
       <th>タイトル</th><th>数</th><th>fc1</th><th>lc1</th><th>bc1</th><th>bg1</th>
@@ -176,6 +180,7 @@ function show_mgr_page(&$posts, $replaced = false) {
 <?php if ( $replaced ) : ?>
   <p>一括置換されました（まだ未実装）</p>
 <?php endif; ?>
+
   <form method="post" action="<?php echo $link_this_page; ?>">
   	<table class="aam_color">
       <tr><th> </th><th>変更前</th><th> </th><th>変更後</th></tr>
