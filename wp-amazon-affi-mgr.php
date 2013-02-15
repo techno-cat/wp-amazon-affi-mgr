@@ -111,7 +111,7 @@ function show_affi_list(&$posts) {
       <th>タイトル</th><th>数</th><th>fc1</th><th>lc1</th><th>bc1</th><th>bg1</th>
     </tr>
 <?php
-    $ptn_str = '/iframe src=\"(.+)?\"/i';
+    $ptn_str = '/iframe src=\"(.+?)\"/i';
     foreach ($posts as $post) {
         preg_match_all( $ptn_str, $post['post_content'], $matches, PREG_SET_ORDER );
         $affi_count = count( $matches );
@@ -148,7 +148,7 @@ function show_mgr_page(&$posts, $replaced = false) {
     $color_bc1 = array();
     $color_bg1 = array();
 
-    $ptn_str = '/iframe src=\"(.+)?\"/i';
+    $ptn_str = '/iframe src=\"(.+?)\"/i';
     foreach ($posts as $post) {
         preg_match_all( $ptn_str, $post['post_content'], $matches, PREG_SET_ORDER );
         foreach ($matches as $match) {
