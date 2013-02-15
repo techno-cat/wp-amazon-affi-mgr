@@ -46,43 +46,53 @@ add_action( 'init', 'amazon_affi_mgr_add_css' );
 
 define( 'AAM_AMAZON_URL', 'http://rcm-jp.amazon.co.jp/e/cm' );
 
-function amazon_affi_mgr_admin_page() {
-    global $wpdb;
-    $sql  = "SELECT * FROM $wpdb->posts";
-    $sql .= " WHERE post_status = 'publish'";
-    $sql .= " AND post_content LIKE '%" . AAM_AMAZON_URL . "%'";
-    $posts = $wpdb->get_results( $sql, ARRAY_A );
+class AmazonAffMgr {
+    public $posts = array();
+    public $link = array();
 
-    $link_this_page = str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] );
-    $link_this_page = str_replace( '&affi_list=1', '', $link_this_page );
-    $link_affi_list = $link_this_page . '&affi_list=1';
+    function __construct() {
+        global $wpdb;
+        $sql  = "SELECT * FROM $wpdb->posts";
+        $sql .= " WHERE post_status = 'publish'";
+        $sql .= " AND post_content LIKE '%" . AAM_AMAZON_URL . "%'";
+        $this->posts = $wpdb->get_results( $sql, ARRAY_A );
 
-?>
+        $link_this_page = str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] );
+        $link_this_page = str_replace( '&affi_list=1', '', $link_this_page );
+        $link_affi_list = $link_this_page . '&affi_list=1';
+
+        $this->header = '
 <div class="wrap">
   <h2>Amazonアフィリエイトの管理</h2>
-  <p>アフィリエイトを含む記事の数: <?php echo count($posts); ?></p>
+  <p>アフィリエイトを含む記事の数: ' . count($mgr->posts) . '</p>
   <p>
-    <a href="<?php echo $link_this_page; ?>">操作画面</a> / <a href="<?php echo $link_affi_list; ?>">一覧を表示</a>
-  </p>
-<?php
-    if ( !$posts ) {
+    <a href="' . $link_this_page . '">操作画面</a> / <a href="' . $link_affi_list . '">一覧を表示</a>
+  </p>';
+
+        $this->footer = '</div>';
+    }
+}
+
+function amazon_affi_mgr_admin_page() {
+    $mgr = new AmazonAffMgr();
+
+    echo $mgr->header;
+    if ( !$mgr->posts ) {
         show_post_not_exists();
     }
     else if ( $_GET['affi_list'] ) {
-        show_affi_list( $posts );
+        show_affi_list( $mgr->posts );
     }
     else {
         if ( $_POST['posted'] === 'Y' ) {
             // todo: replace
-            show_mgr_page( $posts, true );
+            show_mgr_page( $mgr->posts, true );
         }
         else {
-            show_mgr_page( $posts, false );
+            show_mgr_page( $mgr->posts, false );
         }
     }
-?>
-</div>
-<?php
+    echo $mgr->footer;
 }
 
 function show_post_not_exists() {
