@@ -203,7 +203,7 @@ function show_mgr_page(&$posts, $replaced = false) {
     </table>
     <input type="hidden" name="posted" value="Y">
     <p class="submit">
-      <input type="submit" name="Submit" class="button-primary" value="一括置換" />
+      <input type="submit" name="submit" id="submit" class="button-primary" value="一括置換" /><input type="checkbox" name="dryrun" id="dryrun" value="1" checked="checked">テスト実行</input>
     </p>
   </form>
 <?php

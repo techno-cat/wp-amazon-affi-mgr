@@ -32,3 +32,8 @@ table.aam_color td {
 td.aam_color_name {
 	text-align: right;
 }
+
+input#dryrun {
+    margin-left: 10px;
+}
+
