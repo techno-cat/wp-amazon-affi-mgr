@@ -52,6 +52,8 @@ class AmazonAffiMgr {
 
     public $posts = array();
     public $link = array();
+    private $header = '';
+    private $footer = '';
 
     function __construct() {
         global $wpdb;
