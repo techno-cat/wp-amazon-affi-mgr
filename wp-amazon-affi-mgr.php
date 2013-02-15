@@ -81,7 +81,7 @@ function amazon_affi_mgr_admin_page() {
         }
     }
 ?>
-
+</div>
 <?php
 }
 
@@ -175,7 +175,6 @@ function show_mgr_page(&$posts, $replaced = false) {
       <input type="submit" name="Submit" class="button-primary" value="一括置換" />
     </p>
   </form>
-</div>
 <?php
 }
 
