@@ -63,8 +63,12 @@ class AmazonAffiMgr {
         $sql .= " ORDER BY ID DESC";
         $this->posts = $wpdb->get_results( $sql, ARRAY_A );
 
+        // このプラグインで追加したQUERY文字列を削除して、
+        // このプラグインの管理画面のURLを作成
         $link_this_page = str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] );
         $link_this_page = str_replace( '&affi_list=1', '', $link_this_page );
+
+        // アフィリエイトを含む記事一覧ページのURLを作成
         $link_affi_list = $link_this_page . '&affi_list=1';
 
         $this->header = '
