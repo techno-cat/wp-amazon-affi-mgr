@@ -47,8 +47,8 @@ function amazon_affi_mgr_admin_page() {
     AmazonAffiMgr::render();
 }
 
-define( 'AAM_AMAZON_URL', 'http://rcm-jp.amazon.co.jp/e/cm' );
 class AmazonAffiMgr {
+    const AMAZON_URL = 'http://rcm-jp.amazon.co.jp/e/cm';
 
     public $posts = array();
     public $link = array();
@@ -57,7 +57,7 @@ class AmazonAffiMgr {
         global $wpdb;
         $sql  = "SELECT * FROM $wpdb->posts";
         $sql .= " WHERE post_status = 'publish'";
-        $sql .= " AND post_content LIKE '%" . AAM_AMAZON_URL . "%'";
+        $sql .= " AND post_content LIKE '%" . AmazonAffiMgr::AMAZON_URL . "%'";
         $this->posts = $wpdb->get_results( $sql, ARRAY_A );
 
         $link_this_page = str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] );
