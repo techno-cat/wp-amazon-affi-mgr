@@ -58,6 +58,7 @@ class AmazonAffiMgr {
         $sql  = "SELECT * FROM $wpdb->posts";
         $sql .= " WHERE post_status = 'publish'";
         $sql .= " AND post_content LIKE '%" . AmazonAffiMgr::AMAZON_URL . "%'";
+        $sql .= " ORDER BY ID DESC";
         $this->posts = $wpdb->get_results( $sql, ARRAY_A );
 
         $link_this_page = str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] );
