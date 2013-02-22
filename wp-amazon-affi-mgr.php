@@ -89,8 +89,24 @@ class AmazonAffiMgr {
         $this->posts = $wpdb->get_results( $sql, ARRAY_A );
     }
 
-    public function get_user_input() {
-        return array();
+    public function get_user_input(&$post_keys) { 
+        $input = array();
+        foreach ($post_keys as $key) {
+            if ( array_key_exists($key, $_POST) ) {
+                $val = $_POST[$key];
+                if ( preg_match('/[0-9a-f]{6}/i', $val) ) {
+                    $input[$key] = $val; 
+                }
+                else {
+                    $input[$key] = ''; // エラー
+                }
+            }
+            else {
+                // "フォームから送信している場合"は、ここには到達しない
+            }
+        }
+
+        return $input;
     }
 }
 
@@ -139,7 +155,7 @@ function show_affi_list(&$posts) {
 <?php
 }
 
-function show_mgr_page(&$posts, $replaced = false) {
+function show_mgr_page(&$posts, $user_input, $replaced = false) {
     $color_fc1 = array();
     $color_lc1 = array();
     $color_bc1 = array();
@@ -166,19 +182,19 @@ function show_mgr_page(&$posts, $replaced = false) {
       <tr><th> </th><th>変更前</th><th> </th><th>変更後</th></tr>
       <tr>
         <td class="aam_color_name">テキストの色</td><td><?php echo join( ',', array_keys($color_fc1)); ?></td><td>&gt;&gt;</td>
-        <td><input type="text" name="fc1" id="fc1" value="" size="8" maxlength="6" /></td>
+        <td><input type="text" name="fc1" id="fc1" value="<?php echo $user_input['fc1']; ?>" size="8" maxlength="6" /></td>
       </tr>
       <tr>
         <td class="aam_color_name">リンクの色</td><td><?php echo join( ',', array_keys($color_lc1)); ?></td><td>&gt;&gt;</td>
-        <td><input type="text" name="lc1" id="lc1" value="" size="8" maxlength="6" /></td>
+        <td><input type="text" name="lc1" id="lc1" value="<?php echo $user_input['lc1']; ?>" size="8" maxlength="6" /></td>
       </tr>
       <tr>
         <td class="aam_color_name">ボーダーの色</td><td><?php echo join( ',', array_keys($color_bc1)); ?></td><td>&gt;&gt;</td>
-        <td><input type="text" name="bc1" id="bc1" value="" size="8" maxlength="6" /></td>
+        <td><input type="text" name="bc1" id="bc1" value="<?php echo $user_input['bc1']; ?>" size="8" maxlength="6" /></td>
       </tr>
       <tr>
         <td class="aam_color_name">背景の色</td><td><?php echo join( ',', array_keys($color_bg1)); ?></td><td>&gt;&gt;</td>
-        <td><input type="text" name="bg1" id="bg1" value="" size="8" maxlength="6" /></td>
+        <td><input type="text" name="bg1" id="bg1" value="<?php echo $user_input['bg1']; ?>" size="8" maxlength="6" /></td>
       </tr>
     </table>
     <input type="hidden" name="posted" value="Y">
@@ -203,7 +219,7 @@ function parse_color_code($str) {
     );
 }
 
-function amazon_affi_mgr_render(&$posts, $replaced) {
+function amazon_affi_mgr_render(&$posts, $user_input, $replaced) {
     $render = new AmazonAffiMgrRender();
 
     echo $render->put_header();
@@ -216,7 +232,7 @@ function amazon_affi_mgr_render(&$posts, $replaced) {
     }
     else {
         echo $render->put_menu( $posts );
-        show_mgr_page( $posts, $replaced );
+        show_mgr_page( $posts, $user_input, $replaced );
     }
     echo $render->put_footer();
 }
@@ -224,14 +240,15 @@ function amazon_affi_mgr_render(&$posts, $replaced) {
 function amazon_affi_mgr_admin_page() {
     $mgr = new AmazonAffiMgr();
 
+    $user_input = array( 'fc1' => '', 'lc1' => '', 'bc1' => '', 'bg1' => '' );
     $replaced = false;
     if ( $mgr->posts && $_POST['posted'] === 'Y' ) {
+        $user_input = $mgr->get_user_input( array_keys($user_input) );
         // todo: replace
-        $user_input = $mgr->get_user_input();
         $replaced = true;
     }
     
-    amazon_affi_mgr_render( $mgr->posts, $replaced );
+    amazon_affi_mgr_render( $mgr->posts, $user_input, $replaced );
 }
 
 ?>
