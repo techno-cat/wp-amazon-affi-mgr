@@ -43,10 +43,6 @@ function amazon_affi_mgr_add_css() {
 }
 add_action( 'init', 'amazon_affi_mgr_add_css' );
 
-function amazon_affi_mgr_admin_page() {
-    AmazonAffiMgr::render();
-}
-
 class AmazonAffiMgr {
     const AMAZON_URL = 'http://rcm-jp.amazon.co.jp/e/cm';
 
@@ -62,17 +58,17 @@ class AmazonAffiMgr {
         $this->posts = $wpdb->get_results( $sql, ARRAY_A );
     }
 
-    private function put_header() {
+    public function put_header() {
         echo '
 <div class="wrap">
   <h2>Amazonアフィリエイトの管理</h2>';
     }
 
-    private function put_footer() {
+    public function put_footer() {
         echo '</div>';
     }
 
-    private function put_menu() {
+    public function put_menu() {
 
         // このプラグインで追加したQUERY文字列を削除して、
         // このプラグインの管理画面のURIを作成
@@ -89,28 +85,8 @@ class AmazonAffiMgr {
   </p>';
     }
 
-    static public function render() {
-        $mgr = new AmazonAffiMgr();
-
-        echo $mgr->put_header();
-        if ( !$mgr->posts ) {
-            show_post_not_exists();
-        }
-        else if ( $_GET['affi_list'] ) {
-            echo $mgr->put_menu();
-            show_affi_list( $mgr->posts );
-        }
-        else {
-            echo $mgr->put_menu();
-            if ( $_POST['posted'] === 'Y' ) {
-                // todo: replace
-                show_mgr_page( $mgr->posts, true );
-            }
-            else {
-                show_mgr_page( $mgr->posts, false );
-            }
-        }
-        echo $mgr->put_footer();
+    public function get_user_input() {
+        return array();
     }
 }
 
@@ -222,4 +198,30 @@ function parse_color_code($str) {
         ( count($m_bg) ) ? $m_bg[1] : 'error'
     );
 }
+
+function amazon_affi_mgr_admin_page() {
+    $mgr = new AmazonAffiMgr();
+
+    echo $mgr->put_header();
+    if ( !$mgr->posts ) {
+        show_post_not_exists();
+    }
+    else if ( $_GET['affi_list'] ) {
+        echo $mgr->put_menu();
+        show_affi_list( $mgr->posts );
+    }
+    else {
+        echo $mgr->put_menu();
+        if ( $_POST['posted'] === 'Y' ) {
+            $user_input = $mgr->get_user_input();
+            // todo: replace
+            show_mgr_page( $mgr->posts, true );
+        }
+        else {
+            show_mgr_page( $mgr->posts, false );
+        }
+    }
+    echo $mgr->put_footer();
+}
+
 ?>
