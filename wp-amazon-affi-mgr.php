@@ -43,19 +43,8 @@ function amazon_affi_mgr_add_css() {
 }
 add_action( 'init', 'amazon_affi_mgr_add_css' );
 
-class AmazonAffiMgr {
-    const AMAZON_URL = 'http://rcm-jp.amazon.co.jp/e/cm';
-
-    public $posts = array();
-    public $link = array();
-
+class AmazonAffiMgrRender {
     function __construct() {
-        global $wpdb;
-        $sql  = "SELECT * FROM $wpdb->posts";
-        $sql .= " WHERE post_status = 'publish'";
-        $sql .= " AND post_content LIKE '%" . AmazonAffiMgr::AMAZON_URL . "%'";
-        $sql .= " ORDER BY ID DESC";
-        $this->posts = $wpdb->get_results( $sql, ARRAY_A );
     }
 
     public function put_header() {
@@ -68,7 +57,7 @@ class AmazonAffiMgr {
         echo '</div>';
     }
 
-    public function put_menu() {
+    public function put_menu(&$posts) {
 
         // このプラグインで追加したQUERY文字列を削除して、
         // このプラグインの管理画面のURIを作成
@@ -79,10 +68,25 @@ class AmazonAffiMgr {
         $uri_list = $uri_this . '&affi_list=1';
 
         echo '
-  <p>アフィリエイトを含む記事の数: ' . count($this->posts) . '</p>
+  <p>アフィリエイトを含む記事の数: ' . count($posts) . '</p>
   <p>
     <a href="' . $uri_this . '">操作画面</a> / <a href="' . $uri_list . '">一覧を表示</a>
   </p>';
+    }
+}
+
+class AmazonAffiMgr {
+    const AMAZON_URL = 'http://rcm-jp.amazon.co.jp/e/cm';
+
+    public $posts = array();
+
+    function __construct() {
+        global $wpdb;
+        $sql  = "SELECT * FROM $wpdb->posts";
+        $sql .= " WHERE post_status = 'publish'";
+        $sql .= " AND post_content LIKE '%" . AmazonAffiMgr::AMAZON_URL . "%'";
+        $sql .= " ORDER BY ID DESC";
+        $this->posts = $wpdb->get_results( $sql, ARRAY_A );
     }
 
     public function get_user_input() {
@@ -201,17 +205,18 @@ function parse_color_code($str) {
 
 function amazon_affi_mgr_admin_page() {
     $mgr = new AmazonAffiMgr();
+    $render = new AmazonAffiMgrRender();
 
-    echo $mgr->put_header();
+    echo $render->put_header();
     if ( !$mgr->posts ) {
         show_post_not_exists();
     }
     else if ( $_GET['affi_list'] ) {
-        echo $mgr->put_menu();
+        echo $render->put_menu( $mgr->posts );
         show_affi_list( $mgr->posts );
     }
     else {
-        echo $mgr->put_menu();
+        echo $render->put_menu( $mgr->posts );
         if ( $_POST['posted'] === 'Y' ) {
             $user_input = $mgr->get_user_input();
             // todo: replace
@@ -221,7 +226,7 @@ function amazon_affi_mgr_admin_page() {
             show_mgr_page( $mgr->posts, false );
         }
     }
-    echo $mgr->put_footer();
+    echo $render->put_footer();
 }
 
 ?>
