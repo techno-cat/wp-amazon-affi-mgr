@@ -203,30 +203,35 @@ function parse_color_code($str) {
     );
 }
 
-function amazon_affi_mgr_admin_page() {
-    $mgr = new AmazonAffiMgr();
+function amazon_affi_mgr_render(&$posts, $replaced) {
     $render = new AmazonAffiMgrRender();
 
     echo $render->put_header();
-    if ( !$mgr->posts ) {
+    if ( !$posts ) {
         show_post_not_exists();
     }
     else if ( $_GET['affi_list'] ) {
-        echo $render->put_menu( $mgr->posts );
-        show_affi_list( $mgr->posts );
+        echo $render->put_menu( $posts );
+        show_affi_list( $posts );
     }
     else {
-        echo $render->put_menu( $mgr->posts );
-        if ( $_POST['posted'] === 'Y' ) {
-            $user_input = $mgr->get_user_input();
-            // todo: replace
-            show_mgr_page( $mgr->posts, true );
-        }
-        else {
-            show_mgr_page( $mgr->posts, false );
-        }
+        echo $render->put_menu( $posts );
+        show_mgr_page( $posts, $replaced );
     }
     echo $render->put_footer();
+}
+
+function amazon_affi_mgr_admin_page() {
+    $mgr = new AmazonAffiMgr();
+
+    $replaced = false;
+    if ( $mgr->posts && $_POST['posted'] === 'Y' ) {
+        // todo: replace
+        $user_input = $mgr->get_user_input();
+        $replaced = true;
+    }
+    
+    amazon_affi_mgr_render( $mgr->posts, $replaced );
 }
 
 ?>
