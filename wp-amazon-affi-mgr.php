@@ -185,19 +185,19 @@ function show_mgr_page(&$posts, $replaced = false) {
   	<table class="aam_color">
       <tr><th> </th><th>変更前</th><th> </th><th>変更後</th></tr>
       <tr>
-        <td class="aam_color_name"><label>テキストの色</label>(fc1)</td><td><?php echo join( ',', array_keys($color_fc1)); ?></td><td>&gt;&gt;</td>
+        <td class="aam_color_name">テキストの色</td><td><?php echo join( ',', array_keys($color_fc1)); ?></td><td>&gt;&gt;</td>
         <td><input type="text" name="fc1" id="fc1" value="" size="8" maxlength="6" /></td>
       </tr>
       <tr>
-        <td class="aam_color_name"><label>リンクの色</label>(lc1)</td><td><?php echo join( ',', array_keys($color_lc1)); ?></td><td>&gt;&gt;</td>
+        <td class="aam_color_name">リンクの色</td><td><?php echo join( ',', array_keys($color_lc1)); ?></td><td>&gt;&gt;</td>
         <td><input type="text" name="lc1" id="lc1" value="" size="8" maxlength="6" /></td>
       </tr>
       <tr>
-        <td class="aam_color_name"><label>ボーダーの色</label>(bc1)</td><td><?php echo join( ',', array_keys($color_bc1)); ?></td><td>&gt;&gt;</td>
+        <td class="aam_color_name">ボーダーの色</td><td><?php echo join( ',', array_keys($color_bc1)); ?></td><td>&gt;&gt;</td>
         <td><input type="text" name="bc1" id="bc1" value="" size="8" maxlength="6" /></td>
       </tr>
       <tr>
-        <td class="aam_color_name"><label>背景の色</label>(bg1)</td><td><?php echo join( ',', array_keys($color_bg1)); ?></td><td>&gt;&gt;</td>
+        <td class="aam_color_name">背景の色</td><td><?php echo join( ',', array_keys($color_bg1)); ?></td><td>&gt;&gt;</td>
         <td><input type="text" name="bg1" id="bg1" value="" size="8" maxlength="6" /></td>
       </tr>
     </table>
