@@ -43,38 +43,6 @@ function amazon_affi_mgr_add_css() {
 }
 add_action( 'init', 'amazon_affi_mgr_add_css' );
 
-class AmazonAffiMgrRender {
-    function __construct() {
-    }
-
-    public function put_header() {
-        echo '
-<div class="wrap">
-  <h2>Amazonアフィリエイトの管理</h2>';
-    }
-
-    public function put_footer() {
-        echo '</div>';
-    }
-
-    public function put_menu(&$posts) {
-
-        // このプラグインで追加したQUERY文字列を削除して、
-        // このプラグインの管理画面のURIを作成
-        $uri_this = str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] );
-        $uri_this = str_replace( '&affi_list=1', '', $uri_this );
-
-        // アフィリエイトを含む記事一覧ページのURIを作成
-        $uri_list = $uri_this . '&affi_list=1';
-
-        echo '
-  <p>アフィリエイトを含む記事の数: ' . count($posts) . '</p>
-  <p>
-    <a href="' . $uri_this . '">操作画面</a> / <a href="' . $uri_list . '">一覧を表示</a>
-  </p>';
-    }
-}
-
 class AmazonAffiMgr {
     const AMAZON_URL = 'http://rcm-jp.amazon.co.jp/e/cm';
 
@@ -89,16 +57,17 @@ class AmazonAffiMgr {
         $this->posts = $wpdb->get_results( $sql, ARRAY_A );
     }
 
-    public function get_user_input(&$post_keys) { 
-        $input = array();
-        foreach ($post_keys as $key) {
+    public function get_user_input(&$input, &$err_info) {
+        foreach (array_keys($input) as $key) {
             if ( array_key_exists($key, $_POST) ) {
                 $val = $_POST[$key];
                 if ( preg_match('/[0-9a-f]{6}/i', $val) ) {
                     $input[$key] = $val; 
                 }
                 else {
-                    $input[$key] = ''; // エラー
+                    // 不正だけどフォームに表示できる場合はそのままにしておく
+                    $input[$key] = ( mb_strlen($val) <= 6 ) ? $val : '';
+                    $err_info[$key] = 1;
                 }
             }
             else {
@@ -106,7 +75,14 @@ class AmazonAffiMgr {
             }
         }
 
-        return $input;
+        return ( count($err_info) == 0 );
+    }
+
+    public function exec_replace($input, $dryrun = true) {
+        return array(
+            'dryrun' => $dryrun,
+            'count' => count($this->posts)
+        );
     }
 }
 
@@ -155,7 +131,7 @@ function show_affi_list(&$posts) {
 <?php
 }
 
-function show_mgr_page(&$posts, $user_input, $replaced = false) {
+function show_mgr_page(&$posts, $user_input, $err_info, $exec_result) {
     $color_fc1 = array();
     $color_lc1 = array();
     $color_bc1 = array();
@@ -173,10 +149,20 @@ function show_mgr_page(&$posts, $user_input, $replaced = false) {
         }
     }
 ?>
-<?php if ( $replaced ) : ?>
-  <p>一括置換されました（まだ未実装）</p>
+<?php if ( $exec_result ) : ?>
+  <section>
+    <h3>実行結果（まだ未実装）</h3>
+    <p>
+<?php if ( $exec_result['dryrun'] ) : ?>
+        テストモードなので、変更は反映されません。<br />
 <?php endif; ?>
-
+        <?php echo $exec_result['count']; ?>件の記事が更新されました。
+    </p>
+  </section>
+<?php endif; ?>
+<?php if ( $err_info ) : ?>
+  <p style="color:red;">入力に誤りがあります。</p>
+<?php endif; ?>
   <form method="post" action="<?php echo $link_this_page; ?>">
   	<table class="aam_color">
       <tr><th> </th><th>変更前</th><th> </th><th>変更後</th></tr>
@@ -219,36 +205,69 @@ function parse_color_code($str) {
     );
 }
 
-function amazon_affi_mgr_render(&$posts, $user_input, $replaced) {
-    $render = new AmazonAffiMgrRender();
+class AmazonAffiMgrView {
+    function __construct() {
+    }
 
-    echo $render->put_header();
-    if ( !$posts ) {
-        show_post_not_exists();
+    private function put_header() {
+        echo '
+<div class="wrap">
+  <h2>Amazonアフィリエイトの管理</h2>';
     }
-    else if ( $_GET['affi_list'] ) {
-        echo $render->put_menu( $posts );
-        show_affi_list( $posts );
+
+    private function put_footer() {
+        echo '</div>';
     }
-    else {
-        echo $render->put_menu( $posts );
-        show_mgr_page( $posts, $user_input, $replaced );
+
+    private function put_menu(&$posts) {
+
+        // このプラグインで追加したQUERY文字列を削除して、
+        // このプラグインの管理画面のURIを作成
+        $uri_this = str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] );
+        $uri_this = str_replace( '&affi_list=1', '', $uri_this );
+
+        // アフィリエイトを含む記事一覧ページのURIを作成
+        $uri_list = $uri_this . '&affi_list=1';
+
+        echo '
+  <p>アフィリエイトを含む記事の数: ' . count($posts) . '件</p>
+  <p>
+    <a href="' . $uri_this . '">操作画面</a> / <a href="' . $uri_list . '">一覧を表示</a>
+  </p>';
     }
-    echo $render->put_footer();
+
+    public function render(&$posts, $user_input, $err_info, $exec_result) {
+        echo $this->put_header();
+        if ( !$posts ) {
+            show_post_not_exists();
+        }
+        else if ( $_GET['affi_list'] ) {
+            echo $this->put_menu( $posts );
+            show_affi_list( $posts );
+        }
+        else {
+            echo $this->put_menu( $posts );
+            show_mgr_page( $posts, $user_input, $err_info, $exec_result );
+        }
+        echo $this->put_footer();
+    }
 }
 
 function amazon_affi_mgr_admin_page() {
     $mgr = new AmazonAffiMgr();
 
     $user_input = array( 'fc1' => '', 'lc1' => '', 'bc1' => '', 'bg1' => '' );
-    $replaced = false;
+
+    $exec_result = array();
     if ( $mgr->posts && $_POST['posted'] === 'Y' ) {
-        $user_input = $mgr->get_user_input( array_keys($user_input) );
-        // todo: replace
-        $replaced = true;
+        $err_info = array();
+        if ( $mgr->get_user_input($user_input, $err_info) ) {
+            $exec_result = $mgr->exec_replace( $user_input, $_POST['dryrun'] );
+        }
     }
-    
-    amazon_affi_mgr_render( $mgr->posts, $user_input, $replaced );
+
+    $view = new AmazonAffiMgrView();
+    $view->render( $mgr->posts, $user_input, $err_info, $exec_result );
 }
 
 ?>
