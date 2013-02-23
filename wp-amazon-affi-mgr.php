@@ -153,6 +153,81 @@ function aam_show_exec_result($exec_result) {
 <?php
 }
 
+function aam_show_test_result(&$posts) {
+    // フォームに正しい値が入力されたことにする
+    $user_input = array(
+        'fc1' => '123456',
+        'lc1' => '789ABC',
+        'bc1' => 'DEF123',
+        'bg1' => '456789',
+    );
+
+    $post = $posts[0];
+    $original_constent = $post['post_content'];
+    $replaced_constent = $original_constent;
+    $ptn_str = '/iframe src=\"(.+?)\"/i';
+
+    preg_match_all( $ptn_str, $post['post_content'], $matches, PREG_SET_ORDER );
+    
+    echo '<h3>同じ文字列に置換するテスト</h3>';
+    echo '<table>';
+    foreach ($matches as $match) {
+        $got = $match[1];
+        foreach(array_keys($user_input) as $key) {
+            if ( preg_match(('/' . $key . '=([0-9a-f]{6})?/i'), $got, $tmp) ) {
+                $got = str_replace( ($key . '=' . $tmp[1]),  ($key . '=' . $tmp[1]), $got );
+            }
+        }
+
+        echo '<tr><td>before</td><td>' . $match[1]  . '</td></tr>';
+        echo '<tr><td>after</td><td>'  . $got       . '</td></tr>';
+        if ( $got === $match[1] ) {
+            echo '<tr><td>src属性の比較</td><td><strong>OK</strong></td></tr>';
+        }
+        else {
+            echo '<tr><td>src属性の比較</td><td><strong>NG</strong></td></tr>';
+        }
+
+        $replaced_constent = str_replace( $match[1], $got,  $replaced_constent );
+    }
+
+    if ( $replaced_constent === $original_constent ) {
+        echo '<tr><td>投稿内容の比較</td><td><strong>OK</strong></td></tr>';
+    }
+    else {
+        echo '<tr><td>投稿内容の比較</td><td><strong>NG</strong></td></tr>';
+    }
+    echo '</table>';
+
+    echo '<h3>目視確認の出力</h3>';
+    echo '<p>テスト用の入力内容</p>';
+    echo '<table>';
+    foreach(array_keys($user_input) as $key) {
+        echo '<tr><td>' . $key . '</td><td>' . $user_input[$key] . '</td></tr>';
+    }
+    echo '</table>';
+
+    echo '<table>';
+    foreach ($matches as $match) {
+        $got = $match[1];
+        foreach(array_keys($user_input) as $key) {
+            if ( preg_match(('/' . $key . '=([0-9a-f]{6})?/i'), $got, $tmp) ) {
+                $got = str_replace( ($key . '=' . $tmp[1]),  ($key . '=' . $user_input[$key]), $got );
+            }
+        }
+
+        echo '<tr><td>before</td><td>' . $match[1]  . '</td></tr>';
+        echo '<tr><td>after</td><td>'  . $got       . '</td></tr>';
+        if ( mb_strlen($got) === mb_strlen($match[1]) ) {
+            echo '<tr><td>文字数の比較</td><td><strong>OK</strong></td></tr>';
+        }
+        else {
+            echo '<tr><td>文字数の比較</td><td><strong>NG</strong></td></tr>';
+        };
+    }
+    echo '</table>';
+}
+
 function aam_show_mgr_page(&$posts, $user_input, $err_info) {
     $color_fc1 = array();
     $color_lc1 = array();
@@ -263,6 +338,10 @@ class AmazonAffiMgrView {
         else if ( $_GET['affi_list'] ) {
             echo $this->put_menu( $mgr->posts );
             aam_show_affi_list( $mgr->posts );
+        }
+        else if ( $_GET['affi_test'] ) {
+            echo $this->put_menu( $mgr->posts );
+            aam_show_test_result( $mgr->posts, $mgr->user_input, $mgr->error_info );
         }
         else {
             echo $this->put_menu( $mgr->posts );
