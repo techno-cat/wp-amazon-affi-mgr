@@ -150,7 +150,7 @@ function show_mgr_page(&$posts, $user_input, $err_info, $exec_result) {
     }
 ?>
 <?php if ( $exec_result ) : ?>
-  <section>
+  <section class="aam_result_info">
     <h3>実行結果（まだ未実装）</h3>
     <p>
 <?php if ( $exec_result['dryrun'] ) : ?>
@@ -161,7 +161,7 @@ function show_mgr_page(&$posts, $user_input, $err_info, $exec_result) {
   </section>
 <?php endif; ?>
 <?php if ( $err_info ) : ?>
-  <p style="color:red;">入力に誤りがあります。</p>
+  <strong class="aam_error_info">入力に誤りがあります。</strong>
 <?php endif; ?>
   <form method="post" action="<?php echo $link_this_page; ?>">
   	<table class="aam_color">

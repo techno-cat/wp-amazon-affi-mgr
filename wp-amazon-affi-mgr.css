@@ -23,14 +23,23 @@ table#affi_list td {
 	border-width: 1px;
 }
 
-table.aam_color td {
+table.aam_color td, table.aam_color th {
 	font-family: "Lucida Console", Monaco, monospace;
-	margin-right: 5px;
-	margin-left: 5px;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+table.aam_color td.aam_color_name {
+	text-align: right;
 }
 
-td.aam_color_name {
-	text-align: right;
+.aam_error_info {
+    color: red;
+    margin: 10px 0px;
+    display: block;
+}
+
+.aam_result_info {
+    margin-top: 20px
 }
 
 input#dryrun {
