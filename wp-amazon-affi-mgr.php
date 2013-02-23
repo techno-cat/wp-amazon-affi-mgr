@@ -94,13 +94,13 @@ class AmazonAffiMgr {
     }
 }
 
-function show_post_not_exists() {
+function aam_show_post_not_exists() {
 ?>
   <p>アフィリエイトを含む記事はみつかりませんでした。</p>
 <?php
 }    
     
-function show_affi_list(&$posts) {
+function aam_show_affi_list(&$posts) {
 ?>
 
   <table id="affi_list">
@@ -139,7 +139,21 @@ function show_affi_list(&$posts) {
 <?php
 }
 
-function show_mgr_page(&$posts, $user_input, $err_info, $exec_result) {
+function aam_show_exec_result($exec_result) {
+?>
+  <section class="aam_result_info">
+    <h3>実行結果（まだ未実装）</h3>
+    <p>
+<?php if ( $exec_result['dryrun'] ) : ?>
+        テストモードなので、変更は反映されません。<br />
+<?php endif; ?>
+        <?php echo $exec_result['count']; ?>件の記事が更新されました。
+    </p>
+  </section>
+<?php
+}
+
+function aam_show_mgr_page(&$posts, $user_input, $err_info) {
     $color_fc1 = array();
     $color_lc1 = array();
     $color_bc1 = array();
@@ -157,17 +171,6 @@ function show_mgr_page(&$posts, $user_input, $err_info, $exec_result) {
         }
     }
 ?>
-<?php if ( $exec_result ) : ?>
-  <section class="aam_result_info">
-    <h3>実行結果（まだ未実装）</h3>
-    <p>
-<?php if ( $exec_result['dryrun'] ) : ?>
-        テストモードなので、変更は反映されません。<br />
-<?php endif; ?>
-        <?php echo $exec_result['count']; ?>件の記事が更新されました。
-    </p>
-  </section>
-<?php endif; ?>
 <?php if ( $err_info ) : ?>
   <strong class="aam_error_info">入力に誤りがあります。</strong>
 <?php endif; ?>
@@ -248,18 +251,21 @@ class AmazonAffiMgrView {
   </p>';
     }
 
-    public function render(&$posts, $user_input, $err_info, $exec_result) {
+    public function render(&$mgr) {
         echo $this->put_header();
-        if ( !$posts ) {
-            show_post_not_exists();
+        if ( !$mgr->posts ) {
+            aam_show_post_not_exists();
         }
         else if ( $_GET['affi_list'] ) {
-            echo $this->put_menu( $posts );
-            show_affi_list( $posts );
+            echo $this->put_menu( $mgr->posts );
+            aam_show_affi_list( $mgr->posts );
         }
         else {
-            echo $this->put_menu( $posts );
-            show_mgr_page( $posts, $user_input, $err_info, $exec_result );
+            echo $this->put_menu( $mgr->posts );
+            if ( $mgr->exec_result ) {
+                aam_show_exec_result( $mgr->exec_result );
+            }
+            aam_show_mgr_page( $mgr->posts, $mgr->user_input, $mgr->error_info );
         }
         echo $this->put_footer();
     }
@@ -268,7 +274,7 @@ class AmazonAffiMgrView {
 function amazon_affi_mgr_admin_page() {
     $mgr = new AmazonAffiMgr();
     $view = new AmazonAffiMgrView();
-    $view->render( $mgr->posts, $mgr->user_input, $mgr->error_info, $mgr->exec_result );
+    $view->render( $mgr );
 }
 
 ?>
