@@ -240,14 +240,18 @@ class AmazonAffiMgrView {
         // このプラグインの管理画面のURIを作成
         $uri_this = str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] );
         $uri_this = str_replace( '&affi_list=1', '', $uri_this );
+        $uri_this = str_replace( '&affi_test=1', '', $uri_this );
 
         // アフィリエイトを含む記事一覧ページのURIを作成
         $uri_list = $uri_this . '&affi_list=1';
 
+        // デバッグ作業用（置換処理の結果を出力する）のURIを作成
+        $url_test = $uri_this . '&affi_test=1';
+
         echo '
   <p>アフィリエイトを含む記事の数: ' . count($posts) . '件</p>
   <p>
-    <a href="' . $uri_this . '">操作画面</a> / <a href="' . $uri_list . '">一覧を表示</a>
+    <a href="' . $uri_this . '">操作画面</a> / <a href="' . $uri_list . '">一覧を表示</a> / <a href="' . $url_test . '">テスト</a>
   </p>';
     }
 
