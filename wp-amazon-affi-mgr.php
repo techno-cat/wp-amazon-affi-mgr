@@ -47,6 +47,9 @@ class AmazonAffiMgr {
     const AMAZON_URL = 'http://rcm-jp.amazon.co.jp/e/cm';
 
     public $posts = array();
+    public $user_input = array( 'fc1' => '', 'lc1' => '', 'bc1' => '', 'bg1' => '' );
+    public $error_info = array();
+    public $exec_result = array();
 
     function __construct() {
         global $wpdb;
@@ -55,31 +58,36 @@ class AmazonAffiMgr {
         $sql .= " AND post_content LIKE '%" . AmazonAffiMgr::AMAZON_URL . "%'";
         $sql .= " ORDER BY ID DESC";
         $this->posts = $wpdb->get_results( $sql, ARRAY_A );
+
+        if ( $this->posts && $_POST['posted'] === 'Y' ) {
+            $this->update_user_input();
+            if ( !$this->error_info ) {
+                $this->exec_replace( $_POST['dryrun'] );
+            }
+        }
     }
 
-    public function get_user_input(&$input, &$err_info) {
-        foreach (array_keys($input) as $key) {
+    private function update_user_input() {
+        foreach (array_keys($this->user_input) as $key) {
             if ( array_key_exists($key, $_POST) ) {
                 $val = $_POST[$key];
                 if ( preg_match('/[0-9a-f]{6}/i', $val) ) {
-                    $input[$key] = $val; 
+                    $this->user_input[$key] = $val; 
                 }
                 else {
                     // 不正だけどフォームに表示できる場合はそのままにしておく
-                    $input[$key] = ( mb_strlen($val) <= 6 ) ? $val : '';
-                    $err_info[$key] = ( $val === '' ) ? '未入力です' : 'フォーマットが不正です（例：000000）';
+                    $this->user_input[$key] = ( mb_strlen($val) <= 6 ) ? $val : '';
+                    $this->error_info[$key] = ( $val === '' ) ? '未入力です' : 'フォーマットが不正です（例：000000）';
                 }
             }
             else {
                 // "フォームから送信している場合"は、ここには到達しない
             }
         }
-
-        return ( count($err_info) == 0 );
     }
 
-    public function exec_replace($input, $dryrun = true) {
-        return array(
+    public function exec_replace($dryrun = true) {
+        $this->exec_result = array(
             'dryrun' => $dryrun,
             'count' => count($this->posts)
         );
@@ -259,19 +267,8 @@ class AmazonAffiMgrView {
 
 function amazon_affi_mgr_admin_page() {
     $mgr = new AmazonAffiMgr();
-
-    $user_input = array( 'fc1' => '', 'lc1' => '', 'bc1' => '', 'bg1' => '' );
-
-    $exec_result = array();
-    if ( $mgr->posts && $_POST['posted'] === 'Y' ) {
-        $err_info = array();
-        if ( $mgr->get_user_input($user_input, $err_info) ) {
-            $exec_result = $mgr->exec_replace( $user_input, $_POST['dryrun'] );
-        }
-    }
-
     $view = new AmazonAffiMgrView();
-    $view->render( $mgr->posts, $user_input, $err_info, $exec_result );
+    $view->render( $mgr->posts, $mgr->user_input, $mgr->error_info, $mgr->exec_result );
 }
 
 ?>
