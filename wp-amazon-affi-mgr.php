@@ -52,6 +52,7 @@ add_action( 'admin_enqueue_scripts', 'amazon_affi_mgr_del_wpmp_css', 100 );
 
 class AmazonAffiMgr {
     const AMAZON_URL = 'http://rcm-jp.amazon.co.jp/e/cm';
+    const PREG_AFFI_PTN = '/iframe src=\"(.+?)\"/i';
 
     public $posts = array();
     public $user_input = array( 'fc1' => '', 'lc1' => '', 'bc1' => '', 'bg1' => '' );
@@ -115,7 +116,7 @@ function aam_show_affi_list(&$posts) {
       <th>タイトル</th><th>数</th><th>fc1</th><th>lc1</th><th>bc1</th><th>bg1</th>
     </tr>
 <?php
-    $ptn_str = '/iframe src=\"(.+?)\"/i';
+    $ptn_str = AmazonAffiMgr::PREG_AFFI_PTN;
     foreach ($posts as $post) {
         preg_match_all( $ptn_str, $post['post_content'], $matches, PREG_SET_ORDER );
         $affi_count = count( $matches );
@@ -172,7 +173,7 @@ function aam_show_test_result(&$posts) {
     $post = $posts[0];
     $original_constent = $post['post_content'];
     $replaced_constent = $original_constent;
-    $ptn_str = '/iframe src=\"(.+?)\"/i';
+    $ptn_str = AmazonAffiMgr::PREG_AFFI_PTN;
 
     preg_match_all( $ptn_str, $post['post_content'], $matches, PREG_SET_ORDER );
     
@@ -241,7 +242,7 @@ function aam_show_mgr_page(&$posts, $user_input, $err_info) {
     $color_bc1 = array();
     $color_bg1 = array();
 
-    $ptn_str = '/iframe src=\"(.+?)\"/i';
+    $ptn_str = AmazonAffiMgr::PREG_AFFI_PTN;
     foreach ($posts as $post) {
         preg_match_all( $ptn_str, $post['post_content'], $matches, PREG_SET_ORDER );
         foreach ($matches as $match) {
