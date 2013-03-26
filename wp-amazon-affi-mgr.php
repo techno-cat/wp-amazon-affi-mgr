@@ -170,59 +170,59 @@ function aam_show_test_result(&$posts) {
     preg_match_all( $ptn_str, $post['post_content'], $matches, PREG_SET_ORDER );
     
     echo '<h3>同じ文字列に置換するテスト</h3>';
-    echo '<table>';
+    echo '<table class="aam_test">';
     foreach ($matches as $match) {
         $got = $match[1];
         foreach(array_keys($user_input) as $key) {
             if ( preg_match(('/' . $key . '=([0-9a-f]{6})?/i'), $got, $tmp) ) {
-                $got = str_replace( ($key . '=' . $tmp[1]),  ($key . '=' . $tmp[1]), $got );
+                $cnt = 0;
+                $got = str_replace( ($key . '=' . $tmp[1]),  ($key . '=' . $tmp[1]), $got, $cnt );
+                echo '<tr><td>' . $key . 'の置換</td><td>' . (($cnt == 1) ? 'OK' : 'NG') . '</td></tr>';
             }
         }
 
-        echo '<tr><td>before</td><td>' . $match[1]  . '</td></tr>';
-        echo '<tr><td>after</td><td>'  . $got       . '</td></tr>';
-        if ( $got === $match[1] ) {
-            echo '<tr><td>src属性の比較</td><td><strong>OK</strong></td></tr>';
-        }
-        else {
-            echo '<tr><td>src属性の比較</td><td><strong>NG</strong></td></tr>';
-        }
+        echo '<tr><td>src属性の比較</td><td>' . (($got === $match[1]) ? 'OK' : 'NG') . '</td></tr>';
 
-        $replaced_constent = str_replace( $match[1], $got,  $replaced_constent );
+        $cnt = 0;
+        $replaced_constent = str_replace( $match[1], $got,  $replaced_constent, $cnt );
+        echo '<tr><td>src属性の置換</td><td>' . (($cnt == 1) ? 'OK' : 'NG') . '</td></tr>';
     }
 
-    if ( $replaced_constent === $original_constent ) {
-        echo '<tr><td>投稿内容の比較</td><td><strong>OK</strong></td></tr>';
-    }
-    else {
-        echo '<tr><td>投稿内容の比較</td><td><strong>NG</strong></td></tr>';
-    }
+    $cmp_ok = ( $replaced_constent === $original_constent );
+    echo '<tr><td>投稿内容の比較</td><td>' . ($cmp_ok ? 'OK' : 'NG') . '</td></tr>';
     echo '</table>';
 
     echo '<h3>目視確認の出力</h3>';
     echo '<p>テスト用の入力内容</p>';
-    echo '<table>';
+    echo '<table class="aam_test">';
     foreach(array_keys($user_input) as $key) {
-        echo '<tr><td>' . $key . '</td><td>' . $user_input[$key] . '</td></tr>';
+        echo '<tr><td>' . $key . '=' . $user_input[$key] . '</td></tr>';
     }
-    echo '</table>';
+    echo '</table><br />';
 
-    echo '<table>';
+    echo '<table class="aam_test">';
     foreach ($matches as $match) {
         $got = $match[1];
         foreach(array_keys($user_input) as $key) {
             if ( preg_match(('/' . $key . '=([0-9a-f]{6})?/i'), $got, $tmp) ) {
                 $got = str_replace( ($key . '=' . $tmp[1]),  ($key . '=' . $user_input[$key]), $got );
+                echo '<tr><td>' . $key . 'の置換</td><td>' . (($cnt == 1) ? 'OK' : 'NG') . '</td></tr>';
             }
         }
 
-        echo '<tr><td>before</td><td>' . $match[1]  . '</td></tr>';
-        echo '<tr><td>after</td><td>'  . $got       . '</td></tr>';
+        foreach(array_keys($user_input) as $key) {
+            preg_match( ('/' . $key . '=([0-9a-f]{6})?/i'), $match[1], $tmp );
+            $str_before = $key . '=' . $tmp[1];
+            preg_match( ('/' . $key . '=([0-9a-f]{6})?/i'), $got,      $tmp );
+            $str_after = $key . '=' . $tmp[1];
+            echo '<tr><td>目視確認</td><td>' . $str_before . ' -&gt; ' . $str_after . '</td></tr>';
+        }
+
         if ( mb_strlen($got) === mb_strlen($match[1]) ) {
-            echo '<tr><td>文字数の比較</td><td><strong>OK</strong></td></tr>';
+            echo '<tr><td>文字数の比較</td><td>OK</td></tr>';
         }
         else {
-            echo '<tr><td>文字数の比較</td><td><strong>NG</strong></td></tr>';
+            echo '<tr><td>文字数の比較</td><td>NG</td></tr>';
         };
     }
     echo '</table>';
