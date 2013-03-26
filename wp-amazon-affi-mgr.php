@@ -39,9 +39,16 @@ add_action( 'admin_menu', 'amazon_affi_mgr_add_admin_menu' );
 
 function amazon_affi_mgr_add_css() {
     $my_css = WP_PLUGIN_URL . '/' . str_replace( '.php', '.css', plugin_basename(__FILE__) );
-    wp_enqueue_style( 'amazon_affi_mgr_css', $my_css );
+    wp_enqueue_style( 'amazon_affi_mgr', $my_css );
 }
 add_action( 'init', 'amazon_affi_mgr_add_css' );
+
+function amazon_affi_mgr_del_wpmp_css() {
+    if ( wp_style_is('wpmp-admin-custom') ) {
+        wp_dequeue_style( 'wpmp-admin-custom' );
+    }
+}
+add_action( 'admin_enqueue_scripts', 'amazon_affi_mgr_del_wpmp_css', 100 );
 
 class AmazonAffiMgr {
     const AMAZON_URL = 'http://rcm-jp.amazon.co.jp/e/cm';
