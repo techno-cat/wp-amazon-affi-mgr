@@ -94,11 +94,53 @@ class AmazonAffiMgr {
         }
     }
 
+    private function replace_affi_color($post_content) {
+        $ptn_str = AmazonAffiMgr::PREG_AFFI_PTN;
+
+        preg_match_all( $ptn_str, $post_content, $matches, PREG_SET_ORDER );
+        foreach ($matches as $match) {
+
+            // 非効率だけど、iframeタグ単位で置換する
+            $affi = $match[1];
+            foreach(array_keys($this->user_input) as $key) {
+                if ( preg_match(('/' . $key . '=([0-9a-f]{6})?/i'), $affi, $tmp) ) {
+                    $affi = str_replace( ($key . '=' . $tmp[1]),  ($key . '=' . $user_input[$key]), $affi );
+                }
+            }
+
+            $post_content = str_replace( $match[1], $affi, $post_content );
+        }
+
+        return $post_content;
+    }
+
     public function exec_replace($dryrun = true) {
+        $log = '';
+
+        if ( $dryrun ) {
+            $post   = $this->posts[0];
+            $before = $post['post_content'];
+            $after  = $this->replace_affi_color( $before );
+            $log    = '<strong>Before</strong>' . $before . '<br /><br /><strong>After</strong>' . $after;
+        }
+
+        foreach ($this->posts as $post) {
+            $new_post = array();
+            $new_post['post_content'] = $this->replace_affi_color( $post['post_content'] );
+
+            if ( !$dryrun ) {
+                // todo: IDを格納して、更新処理
+            }
+        }
+
         $this->exec_result = array(
             'dryrun' => $dryrun,
-            'count' => count($this->posts)
+            'count'  => count($this->posts)
         );
+
+        if ( $log ) {
+            $this->exec_result['log'] = $log;
+        }
     }
 }
 
@@ -157,6 +199,9 @@ function aam_show_exec_result($exec_result) {
 <?php endif; ?>
         <?php echo $exec_result['count']; ?>件の記事が更新されました。
     </p>
+<?php if ( array_key_exists('log', $exec_result) ) : ?>
+    <p><?php echo $exec_result['log']; ?>
+<?php endif; ?>
   </section>
 <?php
 }
