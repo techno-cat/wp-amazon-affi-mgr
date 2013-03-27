@@ -125,11 +125,16 @@ class AmazonAffiMgr {
         }
 
         foreach ($this->posts as $post) {
-            $new_post = array();
-            $new_post['post_content'] = $this->replace_affi_color( $post['post_content'] );
+
+            // todo: 必要なエラーログをとる
+            $post['post_content'] = $this->replace_affi_color( $post['post_content'] );
 
             if ( !$dryrun ) {
-                // todo: IDを格納して、更新処理
+                // 置換してデータベースを更新
+                $new_post = array();
+                $new_post['ID'] = $post['ID'];
+                $new_post['post_content'] = $this->replace_affi_color( $post['post_content'] );
+                //wp_update_post( $new_post );
             }
         }
 
