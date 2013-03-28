@@ -104,7 +104,7 @@ class AmazonAffiMgr {
             $affi = $match[1];
             foreach(array_keys($this->user_input) as $key) {
                 if ( preg_match(('/' . $key . '=([0-9a-f]{6})?/i'), $affi, $tmp) ) {
-                    $affi = str_replace( ($key . '=' . $tmp[1]),  ($key . '=' . $user_input[$key]), $affi );
+                    $affi = str_replace( ($key . '=' . $tmp[1]),  ($key . '=' . $this->user_input[$key]), $affi );
                 }
             }
 
