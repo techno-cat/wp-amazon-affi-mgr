@@ -228,13 +228,13 @@ function aam_show_test_result(&$mgr) {
 
     $post = $mgr->posts[0];
     $original_constent = $post['post_content'];
-    $replaced_constent = $original_constent;
     $ptn_str = AmazonAffiMgr::PREG_AFFI_PTN;
 
     preg_match_all( $ptn_str, $post['post_content'], $matches, PREG_SET_ORDER );
     
     echo '<h3>同じ文字列に置換するテスト</h3>';
     echo '<table class="aam_test">';
+    $replaced_constent = $original_constent;
     foreach ($matches as $match) {
         $got = $match[1];
         foreach(array_keys($user_input) as $key) {
@@ -265,6 +265,7 @@ function aam_show_test_result(&$mgr) {
     echo '</table><br />';
 
     echo '<table class="aam_test">';
+    $replaced_constent = $original_constent;
     foreach ($matches as $match) {
         $got = $match[1];
         foreach(array_keys($user_input) as $key) {
@@ -288,7 +289,16 @@ function aam_show_test_result(&$mgr) {
         else {
             echo '<tr><td>文字数の比較</td><td>NG</td></tr>';
         }
+
+        $replaced_constent = str_replace( $match[1], $got,  $replaced_constent, $cnt );
+        echo '<tr><td>src属性の置換</td><td>' . (($cnt == 1) ? 'OK' : 'NG') . '</td></tr>';
     }
+    echo '<tr><td>replace_colorのテスト</td><td>';
+
+    $mgr->user_input = $user_input;
+    echo ( $mgr->replace_color($original_constent) === $replaced_constent ) ? 'OK' : 'NG'; 
+
+    echo '</td></tr>';
     echo '</table>';
 }
 
