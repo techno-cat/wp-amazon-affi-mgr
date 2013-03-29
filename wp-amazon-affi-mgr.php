@@ -282,7 +282,7 @@ function aam_show_test_result(&$mgr) {
         }
         else {
             echo '<tr><td>文字数の比較</td><td>NG</td></tr>';
-        };
+        }
     }
     echo '</table>';
 }
