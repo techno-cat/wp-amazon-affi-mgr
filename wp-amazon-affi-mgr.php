@@ -399,7 +399,7 @@ class AmazonAffiMgrView {
         }
         else if ( $_GET['affi_test'] ) {
             echo $this->put_menu( $mgr->posts );
-            aam_show_test_result( $mgr->posts, $mgr->user_input, $mgr->error_info );
+            aam_show_test_result( $mgr->posts );
         }
         else {
             echo $this->put_menu( $mgr->posts );
