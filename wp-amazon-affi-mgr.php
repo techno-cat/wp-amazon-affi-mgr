@@ -211,7 +211,8 @@ function aam_show_exec_result($exec_result) {
 <?php
 }
 
-function aam_show_test_result(&$posts) {
+function aam_show_test_result(&$mgr) {
+
     // フォームに正しい値が入力されたことにする
     $user_input = array(
         'fc1' => '123456',
@@ -220,7 +221,7 @@ function aam_show_test_result(&$posts) {
         'bg1' => '456789',
     );
 
-    $post = $posts[0];
+    $post = $mgr->posts[0];
     $original_constent = $post['post_content'];
     $replaced_constent = $original_constent;
     $ptn_str = AmazonAffiMgr::PREG_AFFI_PTN;
@@ -399,7 +400,7 @@ class AmazonAffiMgrView {
         }
         else if ( $_GET['affi_test'] ) {
             echo $this->put_menu( $mgr->posts );
-            aam_show_test_result( $mgr->posts );
+            aam_show_test_result( $mgr );
         }
         else {
             echo $this->put_menu( $mgr->posts );
