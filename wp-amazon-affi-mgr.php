@@ -94,7 +94,7 @@ class AmazonAffiMgr {
         }
     }
 
-    private function replace_affi_color($post_content) {
+    public function replace_color($post_content) {
         $ptn_str = AmazonAffiMgr::PREG_AFFI_PTN;
 
         preg_match_all( $ptn_str, $post_content, $matches, PREG_SET_ORDER );
@@ -115,37 +115,42 @@ class AmazonAffiMgr {
     }
 
     public function exec_replace($dryrun = true) {
-        $log = '';
 
+        $log = '';
         if ( $dryrun ) {
             $post   = $this->posts[0];
             $before = $post['post_content'];
-            $after  = $this->replace_affi_color( $before );
+            $after  = $this->replace_color( $before );
             $log    = '<strong>Before</strong>' . $before . '<br /><br /><strong>After</strong>' . $after;
         }
 
+        $count = 0;
+        $error_posts = array();
         foreach ($this->posts as $post) {
 
-            // todo: 必要なエラーログをとる
-            $post['post_content'] = $this->replace_affi_color( $post['post_content'] );
+            $post['post_content'] = $this->replace_color( $post['post_content'] );
 
+            // データベースを更新
             if ( !$dryrun ) {
-                // 置換してデータベースを更新
                 $new_post = array();
                 $new_post['ID'] = $post['ID'];
-                $new_post['post_content'] = $this->replace_affi_color( $post['post_content'] );
-                //wp_update_post( $new_post );
+                $new_post['post_content'] = $post['post_content'];
+
+                if ( wp_update_post($new_post) == 0 ) {
+                    // データベース更新エラー
+                    $error_posts[] = $post; 
+                }
             }
+
+            $count++;
         }
 
         $this->exec_result = array(
             'dryrun' => $dryrun,
-            'count'  => count($this->posts)
+            'count'  => $count,
+            'log'    => $log,
+            'error'  => $error_posts
         );
-
-        if ( $log ) {
-            $this->exec_result['log'] = $log;
-        }
     }
 }
 
@@ -204,7 +209,7 @@ function aam_show_exec_result($exec_result) {
 <?php endif; ?>
         <?php echo $exec_result['count']; ?>件の記事が更新されました。
     </p>
-<?php if ( array_key_exists('log', $exec_result) ) : ?>
+<?php if ( $exec_result['log'] ) : ?>
     <p><?php echo $exec_result['log']; ?>
 <?php endif; ?>
   </section>
