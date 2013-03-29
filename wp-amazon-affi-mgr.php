@@ -202,7 +202,7 @@ function aam_show_affi_list(&$posts) {
 function aam_show_exec_result($exec_result) {
 ?>
   <section class="aam_result_info">
-    <h3>実行結果（まだ未実装）</h3>
+    <h3>実行結果</h3>
     <p>
 <?php if ( $exec_result['dryrun'] ) : ?>
         テストモードなので、変更は反映されません。<br />
