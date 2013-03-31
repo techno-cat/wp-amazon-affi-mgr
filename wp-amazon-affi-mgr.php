@@ -355,22 +355,22 @@ function aam_show_mgr_page(&$posts, $user_input, $err_info) {
   	<table class="aam_color">
       <tr><th> </th><th>変更前</th><th> </th><th>変更後</th><th></th></tr>
       <tr>
-        <td class="aam_color_name">テキストの色</td><td><?php echo join( ',', array_keys($color_fc1)); ?></td><td>&gt;&gt;</td>
+        <td class="aam_color_name">テキストの色</td><td><?php echo join( ', ', array_keys($color_fc1)); ?></td><td>&gt;&gt;</td>
         <td><input type="text" name="fc1" id="fc1" value="<?php echo $user_input['fc1']; ?>" size="8" maxlength="6" /></td>
         <td><?php echo ( array_key_exists('fc1', $err_info) ? $err_info['fc1'] : '&nbsp;' ); ?></td>
       </tr>
       <tr>
-        <td class="aam_color_name">リンクの色</td><td><?php echo join( ',', array_keys($color_lc1)); ?></td><td>&gt;&gt;</td>
+        <td class="aam_color_name">リンクの色</td><td><?php echo join( ', ', array_keys($color_lc1)); ?></td><td>&gt;&gt;</td>
         <td><input type="text" name="lc1" id="lc1" value="<?php echo $user_input['lc1']; ?>" size="8" maxlength="6" /></td>
         <td><?php echo ( array_key_exists('lc1', $err_info) ? $err_info['lc1'] : '&nbsp;' ); ?></td>
       </tr>
       <tr>
-        <td class="aam_color_name">ボーダーの色</td><td><?php echo join( ',', array_keys($color_bc1)); ?></td><td>&gt;&gt;</td>
+        <td class="aam_color_name">ボーダーの色</td><td><?php echo join( ', ', array_keys($color_bc1)); ?></td><td>&gt;&gt;</td>
         <td><input type="text" name="bc1" id="bc1" value="<?php echo $user_input['bc1']; ?>" size="8" maxlength="6" /></td>
         <td><?php echo ( array_key_exists('bc1', $err_info) ? $err_info['bc1'] : '&nbsp;' ); ?></td>
       </tr>
       <tr>
-        <td class="aam_color_name">背景の色</td><td><?php echo join( ',', array_keys($color_bg1)); ?></td><td>&gt;&gt;</td>
+        <td class="aam_color_name">背景の色</td><td><?php echo join( ', ', array_keys($color_bg1)); ?></td><td>&gt;&gt;</td>
         <td><input type="text" name="bg1" id="bg1" value="<?php echo $user_input['bg1']; ?>" size="8" maxlength="6" /></td>
         <td><?php echo ( array_key_exists('bg1', $err_info) ? $err_info['bg1'] : '&nbsp;' ); ?></td>
       </tr>
