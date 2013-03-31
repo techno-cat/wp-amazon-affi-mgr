@@ -40,12 +40,12 @@ table.aam_test td, table.aam_test th {
 
 .aam_error_info {
     color: red;
-    margin: 10px 0px;
+    margin: 10px 0;
     display: block;
 }
 
 .aam_result_info {
-    margin-top: 20px
+    margin: 20px 0;
 }
 
 input#dryrun {
