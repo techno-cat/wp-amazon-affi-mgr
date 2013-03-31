@@ -205,7 +205,7 @@ function aam_show_exec_result($exec_result) {
     <h3>実行結果</h3>
     <p>
 <?php if ( $exec_result['dryrun'] ) : ?>
-        テストモードなので、変更は反映されません。<br />
+        お試しモードなので、変更は反映されません。<br />
 <?php endif; ?>
         <?php echo $exec_result['count']; ?>件の記事が更新されました。
     </p>
@@ -349,7 +349,7 @@ function aam_show_mgr_page(&$posts, $user_input, $err_info) {
     </table>
     <input type="hidden" name="posted" value="Y">
     <p class="submit">
-      <input type="submit" name="submit" id="submit" class="button-primary" value="一括置換" /><input type="checkbox" name="dryrun" id="dryrun" value="1" checked="checked">テスト実行</input>
+      <input type="submit" name="submit" id="submit" class="button-primary" value="一括置換" /><input type="checkbox" name="dryrun" id="dryrun" value="1" checked="checked">お試しモード</input>
     </p>
   </form>
 <?php
