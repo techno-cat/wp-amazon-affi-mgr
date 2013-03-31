@@ -124,14 +124,14 @@ class AmazonAffiMgr {
 
             $ptn_str = '/(<iframe.*\/iframe>)?/i';
  
-            $log = '<strong>Before</strong><p>';
+            $log = '<strong>変更前</strong><p>';
             preg_match_all( $ptn_str, $before, $matches, PREG_SET_ORDER );
             foreach ($matches as $match) {
                 $log .= $match[1];
             }
             $log .= '</p>';
 
-            $log .= '<strong>After</strong><p>';
+            $log .= '<strong>変更後</strong><p>';
             preg_match_all( $ptn_str, $after, $matches, PREG_SET_ORDER );
             foreach ($matches as $match) {
                 $log .= $match[1];
