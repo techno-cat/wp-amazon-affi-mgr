@@ -41,7 +41,7 @@ function amazon_affi_mgr_add_css() {
     $my_css = WP_PLUGIN_URL . '/' . str_replace( '.php', '.css', plugin_basename(__FILE__) );
     wp_enqueue_style( 'amazon_affi_mgr', $my_css );
 }
-add_action( 'init', 'amazon_affi_mgr_add_css' );
+add_action( 'admin_init', 'amazon_affi_mgr_add_css' );
 
 function amazon_affi_mgr_del_wpmp_css() {
     if ( wp_style_is('wpmp-admin-custom') ) {
