@@ -121,7 +121,22 @@ class AmazonAffiMgr {
             $post   = $this->posts[0];
             $before = $post['post_content'];
             $after  = $this->replace_color( $before );
-            $log    = '<strong>Before</strong>' . $before . '<br /><br /><strong>After</strong>' . $after;
+
+            $ptn_str = '/(<iframe.*\/iframe>)?/i';
+ 
+            $log = '<strong>Before</strong><p>';
+            preg_match_all( $ptn_str, $before, $matches, PREG_SET_ORDER );
+            foreach ($matches as $match) {
+                $log .= $match[1];
+            }
+            $log .= '</p>';
+
+            $log .= '<strong>After</strong><p>';
+            preg_match_all( $ptn_str, $after, $matches, PREG_SET_ORDER );
+            foreach ($matches as $match) {
+                $log .= $match[1];
+            }
+            $log .= '</p>';
         }
 
         $count = 0;
