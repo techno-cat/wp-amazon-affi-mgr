@@ -227,6 +227,19 @@ function aam_show_exec_result($exec_result) {
 <?php if ( $exec_result['log'] ) : ?>
     <p><?php echo $exec_result['log']; ?>
 <?php endif; ?>
+<?php if ( $exec_result['error'] ) : ?>
+    <p><strong>変更が反映されなかった記事一覧</strong></p>
+    <table id="affi_list">
+      <tr><th>タイトル</th></tr>
+<?php
+    foreach ($exec_result['error'] as $post) {
+?>
+      <tr><td><a href="<?php echo $post['guid']; ?>"><?php echo $post['post_title']; ?></a></td></tr>
+<?php
+    }
+?>
+    </table>
+<?php endif; ?>
   </section>
 <?php
 }
